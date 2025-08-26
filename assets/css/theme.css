@@ -1,0 +1,24 @@
+
+
+.theme-blue-light {
+    --color-border:#2887E033;
+    --color-light: #eff6ff;
+    --color-800: #2887e0;
+   --color-main2: #cacdf5;
+    --color-search: #ecfdf580;
+    --color-overlay: #03315D;
+    --bg-send: #2887e0;
+    --bg-receive: #fff;
+    --bg-color: #ffffff;
+    --bg-chat-color: #f1f8fe;
+    --text-color: #000000;
+}
+
+
+:root{
+    --color-sec: #22d3ee;
+    --color-main: #22c55e;
+    --color-300: #BFD2D0;
+    --color-800: #264c48;
+    --color-900: #143431;
+}

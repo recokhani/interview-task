@@ -1,0 +1,41 @@
+{
+  "name": "nuxt-app",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "start": "PORT=4000 nuxt start",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare"
+  },
+  "dependencies": {
+    "@mdi/font": "^7.4.47",
+    "@nuxtjs/dotenv": "^1.4.2",
+    "@pinia/nuxt": "^0.5.5",
+    "@vee-validate/nuxt": "^4.14.5",
+    "@vee-validate/yup": "^4.14.6",
+    "@venegrad/vue3-click-outside": "^1.0.1",
+    "@vite-pwa/nuxt": "^0.10.6",
+    "@vueuse/core": "^11.1.0",
+    "@vueuse/nuxt": "^11.1.0",
+    "axios": "^1.7.7",
+    "dotenv": "^16.4.5",
+    "moment-jalaali": "^0.10.4",
+    "nuxt": "^3.13.2",
+    "pinia": "^2.2.4",
+    "pinia-plugin-persistedstate": "^4.1.2",
+    "vue": "latest",
+    "vue-router": "latest",
+    "vue-sonner": "^1.2.3",
+    "vue3-carousel-nuxt": "^1.1.4",
+    "vue3-persian-datetime-picker": "^1.2.2",
+    "vuetify-nuxt-module": "^0.18.3",
+    "yup": "^1.4.0"
+  },
+  "devDependencies": {
+    "@nuxtjs/tailwindcss": "^6.12.2",
+    "sass-embedded": "^1.80.3"
+  }
+}

@@ -1,0 +1,137 @@
+stages:
+  - test
+  - production
+
+deploy_to_test:
+  stage: test
+  script:
+    - echo "Deploying custom-landing to test server"
+    - |
+      ssh root@94.182.171.194 -p 2222 << 'EOF'
+        set -e  # Exit immediately if a command exits with a non-zero status
+        echo "Pulling new code to temporary directory"
+        TEMP_DIR_SOURCE_CODE="/var/gitpull/custom-landing"
+        TEMP_DIR_BUILT_CODE="/var/gitpull/custom-landing/.output/"
+        LIVE_DIR="/var/www/custom-landing"
+
+        # Create the TEMP_DIR_SOURCE_CODE if it doesn't exist
+        mkdir -p $TEMP_DIR_SOURCE_CODE
+
+        # Check if the temp directory exists as a Git repository
+        if [ ! -d "$TEMP_DIR_SOURCE_CODE/.git" ]; then
+          echo "Cloning the repository since it doesn't exist in the temp directory"
+          rm -rf $TEMP_DIR_SOURCE_CODE/*  # Clear TEMP_DIR_SOURCE_CODE to avoid nested directory issues
+          git clone --single-branch --branch develop git@git.yektasadcore.ir:ads/custom-landing.git $TEMP_DIR_SOURCE_CODE
+        else
+          echo "Repository already exists in temp directory, pulling latest changes"
+          cd $TEMP_DIR_SOURCE_CODE
+          git pull origin develop
+        fi
+
+        # Delete any .env files
+        echo "deleting any .env files"
+        cd $TEMP_DIR_SOURCE_CODE
+        rm -f .env*
+
+        # Creating env file for test deployment
+        echo "Creating env file for test deployment"
+        printf "VITE_API_BASE_URL=https://testadsapi.yektasadcore.ir/api/v1/\nBASE_URL_SERVER=/ads/" > /var/gitpull/custom-landing/.env
+
+        # Check and modify ssr and target in nuxt.config file
+        echo "Ensuring ssr is true and target is 'server' in nuxt.config.ts"
+        cd $TEMP_DIR_SOURCE_CODE
+        sed -i "s/ssr:.*,/ssr: true,/" nuxt.config.ts
+        sed -i "s/target:.*,/target: 'server',/" nuxt.config.ts
+        sed -i "/export default {/a \\  devServer: { host: '127.0.0.1', port: 3000 }," nuxt.config.ts
+
+
+        # Installing dependencies
+        echo "Installing dependencies"
+        cd $TEMP_DIR_SOURCE_CODE
+        npm install
+
+        # Building the frontend project
+        echo "building the custom-landing project"
+        npm run build
+
+        # Move the updated files to the live directory
+        echo "Deploying the updated code to the live directory"
+        rsync -av --no-perms --delete $TEMP_DIR_BUILT_CODE $LIVE_DIR/
+
+        #restarting supervisor
+        echo "restarting supervisor"
+        supervisorctl restart nuxt_custom_landing
+        
+        # Deleting temp gitpull directory
+        echo "deleting temp gitpull directory"
+        rm -rf $TEMP_DIR_SOURCE_CODE
+      EOF
+  only:
+    - develop
+
+deploy_to_production:
+  stage: production
+  script:
+    - echo "Deploying custom-landing to production server"
+    - |
+      ssh root@94.182.171.195 -p 2222 << 'EOF'
+        set -e  # Exit immediately if a command exits with a non-zero status
+        echo "Pulling new code to temporary directory"
+        TEMP_DIR_SOURCE_CODE="/var/gitpull/custom-landing"
+        TEMP_DIR_BUILT_CODE="/var/gitpull/custom-landing/.output/"
+        LIVE_DIR="/var/www/custom-landing"
+
+        # Create the TEMP_DIR_SOURCE_CODE if it doesn't exist
+        mkdir -p $TEMP_DIR_SOURCE_CODE
+
+        # Check if the temp directory exists as a Git repository
+        if [ ! -d "$TEMP_DIR_SOURCE_CODE/.git" ]; then
+          echo "Cloning the repository since it doesn't exist in the temp directory"
+          rm -rf $TEMP_DIR_SOURCE_CODE/*  # Clear TEMP_DIR_SOURCE_CODE to avoid nested directory issues
+          git clone --single-branch --branch main git@git.yektasadcore.ir:ads/custom-landing.git $TEMP_DIR_SOURCE_CODE
+        else
+          echo "Repository already exists in temp directory, pulling latest changes"
+          cd $TEMP_DIR_SOURCE_CODE
+          git pull origin main
+        fi
+
+        # Delete any .env files
+        echo "deleting any .env files"
+        cd $TEMP_DIR_SOURCE_CODE
+        rm -f .env*
+
+        # Creating env file for production deployment
+        echo "Creating env file for production deployment"
+        printf "VITE_API_BASE_URL=https://panelapi.bam30.com/api/v1/\nBASE_URL_SERVER=/ads/" > /var/gitpull/custom-landing/.env
+
+        # Check and modify ssr and target in nuxt.config file
+        echo "Ensuring ssr is true and target is 'server' in nuxt.config.ts"
+        cd $TEMP_DIR_SOURCE_CODE
+        sed -i "s/ssr:.*,/ssr: true,/" nuxt.config.ts
+        sed -i "s/target:.*,/target: 'server',/" nuxt.config.ts
+        sed -i "/export default {/a \\  devServer: { host: '127.0.0.1', port: 3000 }," nuxt.config.ts
+
+
+        # Installing dependencies
+        echo "Installing dependencies"
+        cd $TEMP_DIR_SOURCE_CODE
+        npm install
+
+        # Building the frontend project
+        echo "building the custom-landing project"
+        npm run build
+
+        # Move the updated files to the live directory
+        echo "Deploying the updated code to the live directory"
+        rsync -av --no-perms --delete $TEMP_DIR_BUILT_CODE $LIVE_DIR/
+
+        #restarting supervisor
+        echo "restarting supervisor"
+        supervisorctl restart nuxt_custom_landing
+        
+        # Deleting temp gitpull directory
+        echo "deleting temp gitpull directory"
+        rm -rf $TEMP_DIR_SOURCE_CODE
+      EOF
+  only:
+    - main
