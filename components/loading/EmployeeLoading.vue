@@ -17,8 +17,8 @@
 <!--    body-->
     <div class="w-full h-full p-3">
       <div
-          v-for="(item,index) in 2"
-          class="bg-gray-200 my-2  rounded-lg animate-pulse w-full h-[100px]"
+          v-for="(item,index) in 6"
+          class="bg-gray-200 my-2  rounded-lg animate-pulse w-full h-[50px]"
       >
 
       </div>

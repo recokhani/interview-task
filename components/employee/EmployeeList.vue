@@ -74,8 +74,8 @@ onMounted(() => {
 
   <v-container class="bg-gray-100 rounded-sm w-full h-full overflow-y-auto">
    <div class="w-full flex relative ">
-<!--     <EmployeeLoading v-if="showLoading"/>-->
-     <div class="w-full h-full">
+     <EmployeeLoading v-if="showLoading"/>
+     <div v-else class="w-full h-full">
        <div class="mb-4 flex justify-between  ">
 
          <span class="text-lg font-semibold">لیست کارمندان</span>
